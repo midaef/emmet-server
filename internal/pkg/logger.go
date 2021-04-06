@@ -7,7 +7,7 @@ import (
 
 func ConfigureLogger(logLevel string) (*zap.Logger, error) {
 	level := zapcore.InfoLevel
-	
+
 	err := level.Set(logLevel)
 	if err != nil {
 		return nil, err
