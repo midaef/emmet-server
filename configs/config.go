@@ -1,10 +1,11 @@
 package configs
 
 type Config struct {
-	Server   Server   `yaml:"server"`
-	Database Database `yaml:"database"`
-	Token    Token    `yaml:"token"`
-	Logger   Logger   `yaml:"logger"`
+	Server        *Server   `yaml:"server"`
+	Database      *Database `yaml:"database"`
+	Token         *Token    `yaml:"token"`
+	Logger        *Logger   `yaml:"logger"`
+	AdminSettings *AdminSettings `yaml:"admin_settings"`
 }
 
 type Server struct {
@@ -24,4 +25,9 @@ type Token struct {
 
 type Logger struct {
 	LogLevel string `yaml:"log_level"`
+}
+
+type AdminSettings struct {
+	Login    string `yaml:"login"`
+	Password string `yaml:"password"`
 }
