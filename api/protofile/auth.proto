@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package proto.auth;
+
+option go_package = "github.com/midaef/emmet-server/internal/api";
+
+service Auth {
+  rpc AuthWithCredentials(AuthWithCredentialsRequest) returns (AuthResponseAccessToken);
+}
+
+message AuthWithCredentialsRequest {
+  string login = 1;
+  string password = 2;
+}
+
+message AuthResponseAccessToken {
+  string AccessToken = 1;
+}
