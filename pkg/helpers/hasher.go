@@ -6,7 +6,7 @@ import (
 )
 
 type PasswordHasher interface {
-	NewMD5Hash() (string, error)
+	PasswordToMD5Hash(pass string) string
 }
 
 type Md5 struct {
@@ -19,13 +19,9 @@ func NewHasher(salt string) *Md5 {
 	}
 }
 
-func (m *Md5) NewMD5Hash(pass string) (string, error) {
+func (m *Md5) PasswordToMD5Hash(pass string) string {
 	hasher := md5.New()
+	hasher.Write([]byte(pass))
 
-	_, err := hasher.Write([]byte(pass))
-	if err != nil {
-		return "", err
-	}
-
-	return hex.EncodeToString(append(hasher.Sum(nil), []byte(m.Salt)...)), nil
+	return hex.EncodeToString(append(hasher.Sum(nil), []byte(m.Salt)...))
 }
