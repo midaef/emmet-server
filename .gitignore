@@ -5,6 +5,19 @@
 *.so
 *.dylib
 
+*.sum
+
+**/.DS_Store
+
+configs/prod.yaml
+
+logs
+
+app.exe
+app
+
+.idea
+
 # Test binary, built with `go test -c`
 *.test
 
