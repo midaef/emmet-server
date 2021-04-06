@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/midaef/emmet-server/configs"
+	"github.com/midaef/emmet-server/internal/app"
 )
 
 const defaultConfigPath = "./configs/"
@@ -29,7 +30,8 @@ func main() {
 	if err != nil {
 		log.Printf("package main: config error \n%v", err)
 	}
-	log.Println(config)
+
+	app.Run(config)
 }
 
 func getConfig(name string) (*configs.Config, error) {
