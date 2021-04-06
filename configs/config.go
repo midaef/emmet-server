@@ -8,7 +8,7 @@ type Config struct {
 }
 
 type Server struct {
-	IP   string `yaml:"ip"`
+	Host string `yaml:"host"`
 	Port string `yaml:"port"`
 }
 
