@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/midaef/emmet-server/internal/server"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net"
@@ -51,8 +50,7 @@ func Run(config *configs.Config) {
 	services := service.NewServices(deps)
 
 	s := grpc.NewServer()
-	srv := server.NewGRPCServer(services, logger)
-	api.RegisterAuthServer(s, srv)
+	api.RegisterAuthServer(s, services.AuthService)
 
 	l, err := net.Listen("tcp", config.Server.Port)
 	if err != nil {
