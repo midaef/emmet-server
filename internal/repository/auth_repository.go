@@ -29,7 +29,7 @@ func (r *Auth) IsExistByEmail(ctx context.Context, login string) bool {
 
 func (r *Auth) GetUserRoleByLoginAndPassword(ctx context.Context, user *models.User) (string, error) {
 	var role string
-	err := r.db.GetContext(ctx, &role, "SELECT role FROM users WHERE login=$1 AND password=$2", user.Login, user.Password)
+	err := r.db.GetContext(ctx, &role, "SELECT user_role FROM users WHERE login=$1 AND password=$2", user.Login, user.Password)
 	if err != nil {
 		return "", err
 	}

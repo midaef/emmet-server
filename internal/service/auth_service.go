@@ -9,23 +9,32 @@ import (
 	"github.com/midaef/emmet-server/pkg/helpers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
+	"time"
 )
 
 type Auth struct {
 	hasher          *helpers.Md5
 	tokenManager    *helpers.JWT
 	authRepository  repository.AuthRepository
+	tokenRepository repository.TokenRepository
 }
 
-func NewAuthService(hasher *helpers.Md5, tokenManager *helpers.JWT, authRepository repository.AuthRepository) *Auth {
+func NewAuthService(hasher *helpers.Md5, tokenManager *helpers.JWT, authRepository repository.AuthRepository,
+	tokenRepository repository.TokenRepository) *Auth {
 	return &Auth{
 		hasher:          hasher,
 		tokenManager:    tokenManager,
 		authRepository:  authRepository,
+		tokenRepository: tokenRepository,
 	}
 }
 
 func (s *Auth) AuthWithCredentials(ctx context.Context, req *api.AuthWithCredentialsRequest) (*api.AuthResponseAccessToken, error) {
+	if s.tokenRepository.IsExistAccessTokenByLogin(ctx, req.Login) {
+		s.tokenRepository.DeleteByLogin(ctx, req.Login)
+	}
+
 	if !s.authRepository.IsExistByEmail(ctx, req.Login) {
 		return nil, status.Error(codes.NotFound, "Login not exists")
 	}
@@ -37,6 +46,7 @@ func (s *Auth) AuthWithCredentials(ctx context.Context, req *api.AuthWithCredent
 
 	role, err := s.authRepository.GetUserRoleByLoginAndPassword(ctx, user)
 	if err != nil {
+		log.Println(err)
 		return nil, status.Error(codes.Unauthenticated, "Login or Password incorrect")
 	}
 
@@ -44,10 +54,23 @@ func (s *Auth) AuthWithCredentials(ctx context.Context, req *api.AuthWithCredent
 		Login: req.Login,
 		StandardClaims: jwt.StandardClaims{
 			Subject: role,
+			ExpiresAt: time.Now().Add(12 * time.Hour).Unix(),
 		},
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Token creation error")
+	}
+
+	token := &models.UserToken{
+		AccessToken:  accessToken,
+		Exp:          time.Now().Add(12 * time.Hour),
+		Role: role,
+		Login: req.Login,
+	}
+
+	err = s.tokenRepository.Create(ctx, token)
+	if err != nil {
+		status.Error(codes.Internal, "Token creation error")
 	}
 
 	return &api.AuthResponseAccessToken{
