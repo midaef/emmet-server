@@ -12,8 +12,13 @@ type AuthService interface {
 	AuthWithCredentials(ctx context.Context, req *api.AuthWithCredentialsRequest) (*api.AuthResponseAccessToken, error)
 }
 
+type UserService interface {
+
+}
+
 type Services struct {
 	AuthService AuthService
+	UserService UserService
 }
 
 type Dependencies struct {
@@ -24,9 +29,11 @@ type Dependencies struct {
 
 func NewServices(deps *Dependencies) *Services {
 
-	authService := NewAuthService(deps.Hasher, deps.JWTManager, deps.Repository.AuthRepository)
+	authService := NewAuthService(deps.Hasher, deps.JWTManager, deps.Repository.AuthRepository, deps.Repository.TokenRepository)
+	userService := NewUserService(deps.Hasher, deps.JWTManager, deps.Repository.UserRepository)
 
 	return &Services{
 		AuthService: authService,
+		UserService: userService,
 	}
 }
