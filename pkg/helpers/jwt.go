@@ -67,7 +67,7 @@ func (j *JWT) IsCorrectJWT(accessToken string) (bool, error) {
 	claims, _ := j.ParseJWT(accessToken)
 
 	if claims.ExpiresAt < time.Now().Unix() {
-		return false, errors.New("token lifetime expired")
+		return false, errors.New("Token lifetime expired")
 	}
 
 	token, _ := j.CreateAccessToken(claims)

@@ -1,6 +1,10 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"context"
+	"github.com/jmoiron/sqlx"
+	"github.com/midaef/emmet-server/internal/models"
+)
 
 type User struct {
 	db *sqlx.DB
@@ -11,3 +15,17 @@ func NewUserRepository(db *sqlx.DB) *User {
 		db: db,
 	}
 }
+
+func (r *User) CreateUserByAccessToken(ctx context.Context, user *models.CreateUser) error {
+	_, err := r.db.ExecContext(ctx, "INSERT INTO users (login, password, user_role) VALUES($1, $2, $3)",
+		user.Login,
+		user.Password,
+		user.Role,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+

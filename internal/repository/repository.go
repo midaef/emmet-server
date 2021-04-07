@@ -19,7 +19,7 @@ type TokenRepository interface {
 }
 
 type UserRepository interface {
-
+	CreateUserByAccessToken(ctx context.Context, user *models.CreateUser) error
 }
 
 type Repositories struct {
