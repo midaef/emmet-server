@@ -47,6 +47,7 @@ func Run(config *configs.Config) {
 
 	s := grpc.NewServer()
 	api.RegisterAuthServer(s, services.AuthService)
+	api.RegisterUserServer(s, services.UserService)
 
 	logger.Info("Started emmet-server",
 		zap.String("host", config.Server.Host),
