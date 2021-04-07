@@ -19,10 +19,6 @@ func Run(config *configs.Config) {
 		logger.Error("Configure logger error", zap.Error(err))
 	}
 
-	logger.Info("Started emmet-server",
-		zap.String("host", config.Server.Host),
-		zap.String("port", config.Server.Port))
-
 	conn := pkg.NewConnection(config.Database.Uri)
 	err = conn.Open()
 	if err != nil {
@@ -51,6 +47,10 @@ func Run(config *configs.Config) {
 
 	s := grpc.NewServer()
 	api.RegisterAuthServer(s, services.AuthService)
+
+	logger.Info("Started emmet-server",
+		zap.String("host", config.Server.Host),
+		zap.String("port", config.Server.Port))
 
 	l, err := net.Listen("tcp", config.Server.Port)
 	if err != nil {
