@@ -13,7 +13,7 @@ type AuthService interface {
 }
 
 type UserService interface {
-
+	CreateUserByAccessToken(ctx context.Context, req *api.CreateUserByAccessTokenRequest) (*api.CreateUserResponseByAccessToken, error)
 }
 
 type Services struct {
@@ -28,9 +28,8 @@ type Dependencies struct {
 }
 
 func NewServices(deps *Dependencies) *Services {
-
 	authService := NewAuthService(deps.Hasher, deps.JWTManager, deps.Repository.AuthRepository, deps.Repository.TokenRepository)
-	userService := NewUserService(deps.Hasher, deps.JWTManager, deps.Repository.UserRepository)
+	userService := NewUserService(deps.Hasher, deps.JWTManager, deps.Repository.UserRepository, deps.Repository.AuthRepository)
 
 	return &Services{
 		AuthService: authService,
