@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package proto.user;
+
+option go_package = "github.com/midaef/emmet-server/internal/api";
+
+service User {
+  rpc CreateUserByAccessToken(CreateUserByAccessTokenRequest) returns (CreateUserResponseByAccessToken);
+}
+
+message CreateUserByAccessTokenRequest {
+  string AccessToken = 1;
+  string login = 2;
+  string password = 3;
+  string role = 4;
+}
+
+message CreateUserResponseByAccessToken {
+  string message = 1;
+}
