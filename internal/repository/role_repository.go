@@ -38,8 +38,8 @@ func (r *Role) CreateRole(ctx context.Context, role *models.Role) error {
 
 func (r *Role) GetPermissionsByRole(ctx context.Context, role string) (*models.Permissions, error) {
 	var permissions models.Permissions
-	err := r.db.GetContext(ctx, &permissions, "SELECT create_user, create_role, create_value FROM roles " +
-		"WHERE user_role = $1", role)
+	err := r.db.GetContext(ctx, &permissions, "SELECT create_user, create_role, create_value, delete_user, " +
+		"delete_role, delete_value FROM roles WHERE user_role = $1", role)
 	if err != nil {
 		return nil, err
 	}
