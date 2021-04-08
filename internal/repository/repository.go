@@ -22,10 +22,15 @@ type UserRepository interface {
 	CreateUserByAccessToken(ctx context.Context, user *models.CreateUser) error
 }
 
+type RoleRepository interface {
+
+}
+
 type Repositories struct {
 	AuthRepository  AuthRepository
 	TokenRepository TokenRepository
 	UserRepository  UserRepository
+	RoleRepository  RoleRepository
 }
 
 func NewRepositories(db *sqlx.DB) *Repositories {
@@ -33,5 +38,6 @@ func NewRepositories(db *sqlx.DB) *Repositories {
 		AuthRepository: NewAuthRepository(db),
 		TokenRepository: NewTokenRepository(db),
 		UserRepository: NewUserRepository(db),
+		RoleRepository: NewRoleRepository(db),
 	}
 }
