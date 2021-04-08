@@ -2,48 +2,49 @@ package service
 
 import (
 	"context"
-	"github.com/midaef/emmet-server/internal/models"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"time"
-
 	"github.com/midaef/emmet-server/internal/api"
+	"github.com/midaef/emmet-server/internal/models"
 	"github.com/midaef/emmet-server/internal/repository"
 	"github.com/midaef/emmet-server/pkg/helpers"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type User struct {
 	hasher         *helpers.Md5
-	tokenManager   *helpers.JWT
+	tokenService   TokenService
 	userRepository repository.UserRepository
 	authRepository repository.AuthRepository
+	roleRepository repository.RoleRepository
 }
 
-func NewUserService(hasher *helpers.Md5, tokenManager *helpers.JWT, userRepository repository.UserRepository,
-	authRepository repository.AuthRepository) *User {
+func NewUserService(hasher *helpers.Md5, tokenService TokenService, userRepository repository.UserRepository,
+	authRepository repository.AuthRepository, roleRepository repository.RoleRepository) *User {
 	return &User{
 		hasher:         hasher,
-		tokenManager:   tokenManager,
+		tokenService:   tokenService,
 		userRepository: userRepository,
 		authRepository: authRepository,
+		roleRepository: roleRepository,
 	}
 }
 
 func (s *User) CreateUserByAccessToken(ctx context.Context, req *api.CreateUserByAccessTokenRequest) (*api.CreateUserResponseByAccessToken, error) {
-	claims, err := s.tokenManager.ParseJWT(req.AccessToken)
+	claims, err := s.tokenService.CheckAccessToken(req.AccessToken)
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "Token incorrect")
+		return nil, err
 	}
 
-	if claims.ExpiresAt < time.Now().Unix() {
-		return nil, status.Error(codes.Unauthenticated, "Token lifetime expired")
+	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Get permissions error")
 	}
 
-	if claims.Subject != "root" {
+	if !permissions.CreateUser {
 		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
 	}
 
-	if s.authRepository.IsExistByEmail(ctx, req.Login) {
+	if s.authRepository.IsExistByLogin(ctx, req.Login) {
 		return nil, status.Error(codes.AlreadyExists, "Login exists")
 	}
 
