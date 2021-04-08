@@ -23,7 +23,8 @@ type UserRepository interface {
 }
 
 type RoleRepository interface {
-
+	CreateRole(ctx context.Context, role *models.Role) error
+	GetPermissionsByRole(ctx context.Context, role string) (*models.Permissions, error)
 }
 
 type Repositories struct {
