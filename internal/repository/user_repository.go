@@ -29,3 +29,12 @@ func (r *User) CreateUserByAccessToken(ctx context.Context, user *models.CreateU
 	return nil
 }
 
+func (r *User) DeleteUserByLogin(ctx context.Context, login string) error {
+	_, err := r.db.ExecContext(ctx, "DELETE FROM users WHERE login = $1", login)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+

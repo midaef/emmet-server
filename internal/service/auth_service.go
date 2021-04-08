@@ -35,7 +35,7 @@ func (s *Auth) AuthWithCredentials(ctx context.Context, req *api.AuthWithCredent
 		s.tokenRepository.DeleteByLogin(ctx, req.Login)
 	}
 
-	if !s.authRepository.IsExistByEmail(ctx, req.Login) {
+	if !s.authRepository.IsExistByLogin(ctx, req.Login) {
 		return nil, status.Error(codes.NotFound, "Login not exists")
 	}
 
