@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto.role;
+
+option go_package = "github.com/midaef/emmet-server/internal/api";
+
+service Role {
+  rpc CreateRoleByAccessToken(CreateRoleByAccessTokenRequest) returns (CreateRoleResponseByAccessToken);
+}
+
+message CreateRoleByAccessTokenRequest {
+  string AccessToken = 1;
+  string role = 2;
+  bool create_user = 3;
+  bool create_role = 4;
+  bool create_value = 5;
+}
+
+message CreateRoleResponseByAccessToken {
+  string message = 1;
+}
