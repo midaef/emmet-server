@@ -48,6 +48,9 @@ func (s *Role) CreateRoleByAccessToken(ctx context.Context, req *api.CreateRoleB
 		CreateRole:  req.CreateRole,
 		CreateUser:  req.CreateUser,
 		CreateValue: req.CreateValue,
+		DeleteRole:  req.DeleteRole,
+		DeleteUser:  req.DeleteUser,
+		DeleteValue: req.DeleteValue,
 		Role:        req.Role,
 	}
 

@@ -17,12 +17,16 @@ func NewRoleRepository(db *sqlx.DB) *Role {
 }
 
 func (r *Role) CreateRole(ctx context.Context, role *models.Role) error {
-	_, err := r.db.ExecContext(ctx, "INSERT INTO roles (created_by, create_user, create_role, create_value, user_role) " +
-		"VALUES($1, $2, $3, $4, $5)",
+	_, err := r.db.ExecContext(ctx, "INSERT INTO roles (created_by, create_user, create_role, create_value, " +
+		"delete_user, delete_role, delete_value, user_role) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8)",
 		role.CreatedBy,
 		role.CreateUser,
 		role.CreateRole,
 		role.CreateValue,
+		role.DeleteUser,
+		role.DeleteRole,
+		role.DeleteValue,
 		role.Role,
 	)
 	if err != nil {
