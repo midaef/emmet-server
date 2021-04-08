@@ -20,10 +20,15 @@ type RoleService interface {
 	CreateRoleByAccessToken(ctx context.Context, req *api.CreateRoleByAccessTokenRequest) (*api.CreateRoleResponseByAccessToken, error)
 }
 
+type TokenService interface {
+	CheckAccessToken(accessToken string) (*helpers.Claims, error)
+}
+
 type Services struct {
-	AuthService AuthService
-	UserService UserService
-	RoleService RoleService
+	AuthService  AuthService
+	UserService  UserService
+	RoleService  RoleService
+	TokenService TokenService
 }
 
 type Dependencies struct {
@@ -33,13 +38,15 @@ type Dependencies struct {
 }
 
 func NewServices(deps *Dependencies) *Services {
+	tokeService := NewTokenService(deps.Hasher, deps.JWTManager)
 	authService := NewAuthService(deps.Hasher, deps.JWTManager, deps.Repository.AuthRepository, deps.Repository.TokenRepository)
-	userService := NewUserService(deps.Hasher, deps.JWTManager, deps.Repository.UserRepository, deps.Repository.AuthRepository)
-	roleService := NewRoleService(deps.Hasher, deps.JWTManager)
+	userService := NewUserService(deps.Hasher, tokeService, deps.Repository.UserRepository, deps.Repository.AuthRepository, deps.Repository.RoleRepository)
+	roleService := NewRoleService(deps.Hasher, tokeService, deps.Repository.RoleRepository)
 
 	return &Services{
 		AuthService: authService,
 		UserService: userService,
 		RoleService: roleService,
+		TokenService: tokeService,
 	}
 }
