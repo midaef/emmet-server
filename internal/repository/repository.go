@@ -8,7 +8,7 @@ import (
 )
 
 type AuthRepository interface {
-	IsExistByEmail(ctx context.Context, login string) bool
+	IsExistByLogin(ctx context.Context, login string) bool
 	GetUserRoleByLoginAndPassword(ctx context.Context, user *models.User) (string, error)
 }
 
@@ -20,11 +20,14 @@ type TokenRepository interface {
 
 type UserRepository interface {
 	CreateUserByAccessToken(ctx context.Context, user *models.CreateUser) error
+	DeleteUserByLogin(ctx context.Context, login string) error
 }
 
 type RoleRepository interface {
 	CreateRole(ctx context.Context, role *models.Role) error
 	GetPermissionsByRole(ctx context.Context, role string) (*models.Permissions, error)
+	IsExistByRole(ctx context.Context, role string) bool
+	DeleteByRole(ctx context.Context, role string) error
 }
 
 type Repositories struct {

@@ -17,7 +17,7 @@ func NewAuthRepository(db *sqlx.DB) *Auth {
 	}
 }
 
-func (r *Auth) IsExistByEmail(ctx context.Context, login string) bool {
+func (r *Auth) IsExistByLogin(ctx context.Context, login string) bool {
 	var id uint64
 	r.db.QueryRowContext(ctx, "SELECT id FROM users WHERE login = $1", login).Scan(&id)
 	if id == 0 {
