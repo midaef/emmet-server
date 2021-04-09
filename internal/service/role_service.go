@@ -63,3 +63,32 @@ func (s *Role) CreateRoleByAccessToken(ctx context.Context, req *api.CreateRoleB
 		Message: "Role created",
 	}, nil
 }
+
+func (s *Role) DeleteRoleByAccessToken(ctx context.Context, req *api.DeleteRoleByAccessTokenRequest) (*api.DeleteRoleResponseByAccessToken, error) {
+	claims, err := s.tokenService.CheckAccessToken(req.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Get permissions error")
+	}
+
+	if !permissions.DeleteRole {
+		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
+	}
+
+	if !s.roleRepository.IsExistByRole(ctx, req.Role) {
+		return nil, status.Error(codes.AlreadyExists, "Role not exists")
+	}
+
+	err = s.roleRepository.DeleteByRole(ctx, req.Role)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Delete role error")
+	}
+
+	return &api.DeleteRoleResponseByAccessToken{
+		Message: "Role deleted",
+	}, nil
+}
