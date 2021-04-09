@@ -6,6 +6,7 @@ option go_package = "github.com/midaef/emmet-server/internal/api";
 
 service User {
   rpc CreateUserByAccessToken(CreateUserByAccessTokenRequest) returns (CreateUserResponseByAccessToken);
+  rpc DeleteUserByAccessToken(DeleteUserByAccessTokenRequest) returns (DeleteUserResponseByAccessToken);
 }
 
 message CreateUserByAccessTokenRequest {
@@ -16,5 +17,14 @@ message CreateUserByAccessTokenRequest {
 }
 
 message CreateUserResponseByAccessToken {
+  string message = 1;
+}
+
+message DeleteUserByAccessTokenRequest {
+  string AccessToken = 1;
+  string login = 2;
+}
+
+message DeleteUserResponseByAccessToken {
   string message = 1;
 }

@@ -6,6 +6,8 @@ option go_package = "github.com/midaef/emmet-server/internal/api";
 
 service Role {
   rpc CreateRoleByAccessToken(CreateRoleByAccessTokenRequest) returns (CreateRoleResponseByAccessToken);
+  rpc DeleteRoleByAccessToken(DeleteRoleByAccessTokenRequest) returns (DeleteRoleResponseByAccessToken);
+
 }
 
 message CreateRoleByAccessTokenRequest {
@@ -20,5 +22,14 @@ message CreateRoleByAccessTokenRequest {
 }
 
 message CreateRoleResponseByAccessToken {
+  string message = 1;
+}
+
+message DeleteRoleByAccessTokenRequest {
+  string AccessToken = 1;
+  string role = 2;
+}
+
+message DeleteRoleResponseByAccessToken {
   string message = 1;
 }
