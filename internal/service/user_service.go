@@ -64,3 +64,32 @@ func (s *User) CreateUserByAccessToken(ctx context.Context, req *api.CreateUserB
 		Message: "User created",
 	}, nil
 }
+
+func (s *User) DeleteUserByAccessToken(ctx context.Context, req *api.DeleteUserByAccessTokenRequest) (*api.DeleteUserResponseByAccessToken, error) {
+	claims, err := s.tokenService.CheckAccessToken(req.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Get permissions error")
+	}
+
+	if !permissions.DeleteUser {
+		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
+	}
+
+	if !s.authRepository.IsExistByLogin(ctx, req.Login) {
+		return nil, status.Error(codes.AlreadyExists, "Login not exists")
+	}
+
+	err = s.userRepository.DeleteUserByLogin(ctx, req.Login)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Delete user error")
+	}
+
+	return &api.DeleteUserResponseByAccessToken{
+		Message: "User deleted",
+	}, nil
+}
