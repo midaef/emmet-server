@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package proto.data;
+
+option go_package = "github.com/midaef/emmet-server/internal/api";
+
+service Data {
+  rpc CreateValueByAccessToken(CreateValueByAccessTokenRequest) returns (CreateValueResponseByAccessToken);
+  rpc DeleteValueByAccessToken(DeleteValueByAccessTokenRequest) returns (DeleteValueResponseByAccessToken);
+  rpc GetValueByAccessToken(GetValueByAccessTokenRequest) returns (GetValueResponseByAccessToken);
+}
+
+message CreateValueByAccessTokenRequest {
+  string AccessToken = 1;
+  string key = 2;
+  string value = 3;
+  string roles = 4;
+}
+
+message CreateValueResponseByAccessToken {
+  string message = 1;
+}
+
+message DeleteValueByAccessTokenRequest {
+  string AccessToken = 1;
+  string key = 2;
+}
+
+message DeleteValueResponseByAccessToken {
+  string message = 1;
+}
+
+message GetValueByAccessTokenRequest {
+  string AccessToken = 1;
+  string key = 2;
+}
+
+message GetValueResponseByAccessToken {
+  string value = 1;
+}
