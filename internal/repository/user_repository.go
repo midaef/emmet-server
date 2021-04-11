@@ -38,3 +38,12 @@ func (r *User) DeleteUserByLogin(ctx context.Context, login string) error {
 	return nil
 }
 
+func (r *User) UpdatePasswordByLogin(ctx context.Context, user *models.User) error {
+	_, err := r.db.ExecContext(ctx, "UPDATE users SET password = $1 WHERE login = $2", user.Password, user.Login)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+

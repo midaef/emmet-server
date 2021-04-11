@@ -49,6 +49,7 @@ func Run(config *configs.Config) {
 	api.RegisterAuthServer(s, services.AuthService)
 	api.RegisterUserServer(s, services.UserService)
 	api.RegisterRoleServer(s, services.RoleService)
+	api.RegisterDataServer(s, services.DataService)
 
 	logger.Info("Started emmet-server",
 		zap.String("host", config.Server.Host),

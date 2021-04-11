@@ -25,6 +25,10 @@ func (s *Token) CheckAccessToken(accessToken string) (*helpers.Claims, error) {
 		return nil, status.Error(codes.Unauthenticated, "Token incorrect")
 	}
 
+	if claims.ExpiresAt < time.Now().Unix() {
+		return nil, status.Error(codes.Unauthenticated, "Token lifetime expired")
+	}
+
 	token, err := s.tokenManager.CreateAccessToken(claims)
 	if err != nil {
 		return nil, status.Error(codes.Unauthenticated, "Token incorrect")
@@ -34,9 +38,7 @@ func (s *Token) CheckAccessToken(accessToken string) (*helpers.Claims, error) {
 		return nil, status.Error(codes.Unauthenticated, "Token incorrect")
 	}
 
-	if claims.ExpiresAt < time.Now().Unix() {
-		return nil, status.Error(codes.Unauthenticated, "Token lifetime expired")
-	}
+
 
 	return claims, nil
 }
