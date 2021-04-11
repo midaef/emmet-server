@@ -21,6 +21,7 @@ type TokenRepository interface {
 type UserRepository interface {
 	CreateUserByAccessToken(ctx context.Context, user *models.CreateUser) error
 	DeleteUserByLogin(ctx context.Context, login string) error
+	UpdatePasswordByLogin(ctx context.Context, user *models.User) error
 }
 
 type RoleRepository interface {
@@ -30,11 +31,19 @@ type RoleRepository interface {
 	DeleteByRole(ctx context.Context, role string) error
 }
 
+type DataRepository interface {
+	CreateValue(ctx context.Context, value *models.Value) error
+	GetValueByKey(ctx context.Context, key string) (*models.Value, error)
+	DeleteValueByKey(ctx context.Context, key string) error
+	IsExistByKey(ctx context.Context, key string) bool
+}
+
 type Repositories struct {
 	AuthRepository  AuthRepository
 	TokenRepository TokenRepository
 	UserRepository  UserRepository
 	RoleRepository  RoleRepository
+	DataRepository  DataRepository
 }
 
 func NewRepositories(db *sqlx.DB) *Repositories {
@@ -43,5 +52,6 @@ func NewRepositories(db *sqlx.DB) *Repositories {
 		TokenRepository: NewTokenRepository(db),
 		UserRepository: NewUserRepository(db),
 		RoleRepository: NewRoleRepository(db),
+		DataRepository: NewDataRepository(db),
 	}
 }
