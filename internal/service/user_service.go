@@ -35,6 +35,10 @@ func (s *User) CreateUserByAccessToken(ctx context.Context, req *api.CreateUserB
 		return nil, err
 	}
 
+	if !s.authRepository.IsExistByLogin(ctx, claims.Login) {
+		return nil, status.Error(codes.NotFound, "Your account not exists")
+	}
+
 	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Get permissions error")
@@ -42,6 +46,10 @@ func (s *User) CreateUserByAccessToken(ctx context.Context, req *api.CreateUserB
 
 	if !permissions.CreateUser {
 		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
+	}
+
+	if !s.roleRepository.IsExistByRole(ctx, req.Role) {
+		return nil, status.Error(codes.NotFound, "Role not exists")
 	}
 
 	if s.authRepository.IsExistByLogin(ctx, req.Login) {
@@ -71,6 +79,10 @@ func (s *User) DeleteUserByAccessToken(ctx context.Context, req *api.DeleteUserB
 		return nil, err
 	}
 
+	if !s.authRepository.IsExistByLogin(ctx, claims.Login) {
+		return nil, status.Error(codes.NotFound, "Your account not exists")
+	}
+
 	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Get permissions error")
@@ -78,6 +90,10 @@ func (s *User) DeleteUserByAccessToken(ctx context.Context, req *api.DeleteUserB
 
 	if !permissions.DeleteUser {
 		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
+	}
+
+	if req.Login == "root" {
+		return nil, status.Error(codes.PermissionDenied, "Root cannot be deleted")
 	}
 
 	if !s.authRepository.IsExistByLogin(ctx, req.Login) {
@@ -93,3 +109,29 @@ func (s *User) DeleteUserByAccessToken(ctx context.Context, req *api.DeleteUserB
 		Message: "User deleted",
 	}, nil
 }
+
+func (s *User) UpdatePasswordByAccessToken(ctx context.Context, req *api.UpdatePasswordByAccessTokenRequest) (*api.UpdatePasswordResponseByAccessToken, error) {
+	claims, err := s.tokenService.CheckAccessToken(req.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	if !s.authRepository.IsExistByLogin(ctx, claims.Login) {
+		return nil, status.Error(codes.NotFound, "Your account not exists")
+	}
+
+	user := &models.User{
+		Login:    claims.Login,
+		Password: s.hasher.PasswordToMD5Hash(req.Password),
+	}
+
+	err = s.userRepository.UpdatePasswordByLogin(ctx, user)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "Update password error")
+	}
+
+	return &api.UpdatePasswordResponseByAccessToken{
+		Message: "Password updated",
+	}, nil
+}
+
