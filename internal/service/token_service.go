@@ -38,7 +38,5 @@ func (s *Token) CheckAccessToken(accessToken string) (*helpers.Claims, error) {
 		return nil, status.Error(codes.Unauthenticated, "Token incorrect")
 	}
 
-
-
 	return claims, nil
 }

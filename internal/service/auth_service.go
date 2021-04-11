@@ -9,7 +9,6 @@ import (
 	"github.com/midaef/emmet-server/pkg/helpers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 	"time"
 )
 
@@ -46,7 +45,6 @@ func (s *Auth) AuthWithCredentials(ctx context.Context, req *api.AuthWithCredent
 
 	role, err := s.authRepository.GetUserRoleByLoginAndPassword(ctx, user)
 	if err != nil {
-		log.Println(err)
 		return nil, status.Error(codes.Unauthenticated, "Login or Password incorrect")
 	}
 
