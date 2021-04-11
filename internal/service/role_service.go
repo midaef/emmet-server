@@ -14,13 +14,16 @@ type Role struct {
 	hasher         *helpers.Md5
 	tokenService   TokenService
 	roleRepository repository.RoleRepository
+	authRepository repository.AuthRepository
 }
 
-func NewRoleService(hasher *helpers.Md5, tokenService TokenService, roleRepository repository.RoleRepository) *Role {
+func NewRoleService(hasher *helpers.Md5, tokenService TokenService, roleRepository repository.RoleRepository,
+	authRepository repository.AuthRepository) *Role {
 	return &Role{
 		hasher:         hasher,
 		tokenService:   tokenService,
 		roleRepository: roleRepository,
+		authRepository: authRepository,
 	}
 }
 
@@ -28,6 +31,10 @@ func (s *Role) CreateRoleByAccessToken(ctx context.Context, req *api.CreateRoleB
 	claims, err := s.tokenService.CheckAccessToken(req.AccessToken)
 	if err != nil {
 		return nil, err
+	}
+
+	if !s.authRepository.IsExistByLogin(ctx, claims.Login) {
+		return nil, status.Error(codes.NotFound, "Your account not exists")
 	}
 
 	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
@@ -70,6 +77,10 @@ func (s *Role) DeleteRoleByAccessToken(ctx context.Context, req *api.DeleteRoleB
 		return nil, err
 	}
 
+	if !s.authRepository.IsExistByLogin(ctx, claims.Login) {
+		return nil, status.Error(codes.NotFound, "Your account not exists")
+	}
+
 	permissions, err := s.roleRepository.GetPermissionsByRole(ctx, claims.Subject)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "Get permissions error")
@@ -77,6 +88,10 @@ func (s *Role) DeleteRoleByAccessToken(ctx context.Context, req *api.DeleteRoleB
 
 	if !permissions.DeleteRole {
 		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
+	}
+
+	if req.Role == "root" {
+		return nil, status.Error(codes.PermissionDenied, "Root cannot be deleted")
 	}
 
 	if !s.roleRepository.IsExistByRole(ctx, req.Role) {
