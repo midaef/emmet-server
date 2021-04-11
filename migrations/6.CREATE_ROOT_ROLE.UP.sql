@@ -1,0 +1,22 @@
+INSERT INTO roles
+(
+    created_by,
+    create_user,
+    create_role,
+    create_value,
+    user_role,
+    delete_user,
+    delete_role,
+    delete_value
+)
+VALUES
+(
+    'root',
+    true,
+    true,
+    true,
+    'root',
+    true,
+    true,
+    true
+);
