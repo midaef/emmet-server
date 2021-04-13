@@ -90,8 +90,8 @@ func (s *Data) DeleteValueByAccessToken(ctx context.Context, req *api.DeleteValu
 		return nil, status.Error(codes.PermissionDenied, "Insufficient access rights")
 	}
 
-	if s.dataRepository.IsExistByKey(ctx, req.Key) {
-		return nil, status.Error(codes.AlreadyExists, "Key exists")
+	if !s.dataRepository.IsExistByKey(ctx, req.Key) {
+		return nil, status.Error(codes.AlreadyExists, "Key not exists")
 	}
 
 	err = s.dataRepository.DeleteValueByKey(ctx, req.Key)
