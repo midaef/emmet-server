@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"context"
-
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // ...
 )

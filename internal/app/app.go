@@ -27,7 +27,7 @@ func Run(config *configs.Config) {
 
 	defer conn.DB.Close()
 
-	logger.Debug("Connected to administration database")
+	logger.Debug("Connected to emmet database")
 
 	repositories := repository.NewRepositories(conn.DB)
 
