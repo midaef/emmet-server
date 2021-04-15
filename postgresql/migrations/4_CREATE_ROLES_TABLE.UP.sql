@@ -5,6 +5,9 @@ CREATE TABLE public.roles
     create_user boolean NOT NULL,
     create_role boolean NOT NULL,
     create_value boolean NOT NULL,
+    delete_user boolean NOT NULL,
+    delete_value boolean NOT NULL,
+    delete_role boolean NOT NULL,
     user_role character varying(32) NOT NULL,
     PRIMARY KEY (id)
 );
