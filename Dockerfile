@@ -1,12 +1,12 @@
-# golang image where workspace (GOPATH) configured at /go.
 FROM golang:alpine as builder
-
 
 ADD . /go/src/emmet-server
 WORKDIR /go/src/emmet-server
 RUN go mod download
 
 COPY . ./
+
+RUN chmod +x wait-for-postgres.sh
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix nocgo -o /emmet-server ./cmd/app/main.go
 
