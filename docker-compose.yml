@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  emmet-server:
+    build: ./
+    command: ./wait-for-postgres.sh ./emmet-service
+    ports:
+      - 65000:65000
+    depends_on:
+      - postgresql
+
+  postgresql:
+      restart: always
+      build: ./postgresql/
+      ports:
+        - 5431:5432
+      environment:
+        POSTGRES_DB: emmet
+        POSTGRES_PASSWORD: 12345678
