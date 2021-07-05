@@ -11,6 +11,7 @@ generate-pb:
 	for SOURCE in $(SOURCES); do \
 		echo $$SOURCE; \
  		protoc -I api/protofile --go_out=module=github.com/midaef/emmet-server/internal/api,plugins=grpc:internal/api $$SOURCE*.proto; \
+		protoc -I api/protofile --go_out=module=github.com/midaef/emmet-server/extra/emmet,plugins=grpc:extra/emmet $$SOURCE*.proto; \
 	done; \
 
 .PHONY: evans
