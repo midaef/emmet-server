@@ -13,9 +13,6 @@ configs/prod.yaml
 
 logs
 
-app.exe
-app.sh
-
 .idea
 
 # Test binary, built with `go test -c`
@@ -26,4 +23,3 @@ app.sh
 
 var
 docker-entrypoint-initdb.d
-app

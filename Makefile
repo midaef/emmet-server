@@ -1,4 +1,4 @@
-SOURCES = $(sort $(dir $(wildcard ./api/protofile/*/)))
+SOURCES = $(sort $(dir $(wildcard ./api/*/)))
 
 .ONESHELL:
 
@@ -6,14 +6,14 @@ SOURCES = $(sort $(dir $(wildcard ./api/protofile/*/)))
 build-go:
 	go build -v ./cmd/app
 
+.ONESHELL:
 .PHONY: generate-pb
 generate-pb:
 	for SOURCE in $(SOURCES); do \
-		echo $$SOURCE; \
- 		protoc -I api/protofile --go_out=module=github.com/midaef/emmet-server/internal/api,plugins=grpc:internal/api $$SOURCE*.proto; \
-		protoc -I api/protofile --go_out=module=github.com/midaef/emmet-server/extra/emmet,plugins=grpc:extra/emmet $$SOURCE*.proto; \
-	done; \
+  		  echo $$SOURCE; \
+  		  protoc -I=./api --go_out=plugins=grpc:./extra $$SOURCE*.proto; \
+  	done;
 
 .PHONY: evans
 evans:
-	evans api/protofile/$(name).proto -p $(port)
+	evans api/$(name).proto -p $(port)

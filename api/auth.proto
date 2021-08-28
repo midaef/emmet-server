@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package proto.auth;
+
+option go_package = "./auth";
+
+service Auth {
+  rpc AuthWithCredentials(AuthWithCredentialsRequest) returns (AccessRefreshTokens);
+
+  rpc AuthWithAccessToken(AuthWithAccessTokenRequest) returns (AuthWithAccessTokenResponse);
+
+  rpc RefreshTokens(AccessRefreshTokens) returns (AccessRefreshTokens);
+}
+
+message AccessRefreshTokens {
+  string access_token  = 1;
+  string refresh_token = 2;
+}
+
+message AuthWithCredentialsRequest {
+  string login     = 1;
+  string password  = 2;
+}
+
+message AuthWithAccessTokenRequest{
+  string access_token = 1;
+}
+
+message AuthWithAccessTokenResponse{}
+
+
+
+
+
+

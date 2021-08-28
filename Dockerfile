@@ -16,7 +16,7 @@ RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /emmet-server ./emmet-server
 RUN mkdir ./configs
-COPY ./configs/default_config.yaml ./configs
+COPY ./configs/default-config.yaml ./configs
 
 EXPOSE 65000
 

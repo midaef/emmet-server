@@ -1,0 +1,15 @@
+server:
+  ip:   "0.0.0.0"
+  port: "65000"
+
+db:
+  host:     "postgresql"
+  port:     "5432"
+  user:     "postgres"
+  password: "12345678"
+  db_name:  "emmet"
+  ssl_mode: "disable"
+
+jwt:
+  secret_key:      "1234"
+  expiration_time: "24h"
