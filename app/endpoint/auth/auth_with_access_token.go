@@ -19,5 +19,7 @@ func (a *AuthEndpoint) AuthWithAccessToken(ctx context.Context, req *auth.AuthWi
 		return nil, status.Error(codes.Unauthenticated, "token has expired")
 	}
 
-	return &auth.AuthWithAccessTokenResponse{}, nil
+	return &auth.AuthWithAccessTokenResponse{
+		Message: "authenticated",
+	}, nil
 }

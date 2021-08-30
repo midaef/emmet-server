@@ -44,3 +44,24 @@ func (s *Service) GenerateTokens(ctx context.Context, userID uint64, jwtSecretKe
 
 	return token, nil
 }
+
+func (s *Service) GetUserIDByAccessToken(ctx context.Context, accessToken string, secretKey string) (uint64, error) {
+	if accessToken == "" {
+		return 0, status.Error(codes.Unauthenticated, "access-token doesn't exist")
+	}
+
+	claims, err := jwt_helper.ParseJWT([]byte(secretKey), accessToken)
+	if err != nil {
+		return 0, err
+	}
+
+	if claims.ExpiresAt < time.Now().Unix() {
+		return 0, status.Error(codes.Unauthenticated, "token has expired")
+	}
+
+	if err := claims.Valid(); err != nil {
+		return 0, err
+	}
+
+	return claims.ID, nil
+}

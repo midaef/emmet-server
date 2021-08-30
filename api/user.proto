@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package proto.user;
+
+option go_package = "./user";
+
+service User {
+  rpc CreateUser(CreateUserRequest) returns (MessageResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (MessageResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (MessageResponse);
+}
+
+message CreateUserRequest {
+  string access_token  = 1;
+  string user_login    = 2;
+  string user_password = 3;
+  string user_role     = 4;
+}
+
+message DeleteUserRequest {
+  string access_token  = 1;
+  string user_login    = 2;
+}
+
+message UpdateUserRequest {
+  string access_token      = 1;
+  string user_login        = 2;
+  string new_user_password = 4;
+  string new_user_role     = 5;
+}
+
+message MessageResponse {
+  string message = 1;
+}

@@ -34,45 +34,75 @@ func (u *User) IsExistByLogin(ctx context.Context, login string) bool {
 }
 
 func (u *User) GetUserByCredentials(ctx context.Context, credentials *models.Credentials) (uint64, error) {
-	var id []uint64
+	var id uint64
 
 	err := u.db.GetContext(ctx, &id, "SELECT id FROM users WHERE login = $1 AND password = $2", credentials.Login, credentials.Password)
 	if err != nil {
 		return 0, err
 	}
 
-	if len(id) == 0 {
+	if id == 0 {
 		return 0, status.Errorf(codes.Internal, "user not found")
 	}
 
-	return id[0], nil
+	return id, nil
 }
 
-func (u *User) GetUserByUserID(ctx context.Context, userID uint64) (string, error) {
-	var userType []string
+func (u *User) GetUserByUserID(ctx context.Context, userID uint64) (*models.User, error) {
+	var user models.User
 
-	err := u.db.SelectContext(ctx, &userType, "SELECT user_type FROM users WHERE id=$1", userID)
+	err := u.db.GetContext(ctx, &user, "SELECT * FROM users WHERE id = $1", userID)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	if len(userType) == 0 {
-		return "", status.Errorf(codes.Internal, "User not found")
-	}
-
-	return userType[0], err
+	return &user, nil
 }
 
 func (u *User) CreateUser(ctx context.Context, user *models.User) (uint64, error) {
 	var id uint64
-	err := u.db.QueryRowContext(ctx, "INSERT INTO users (login, password, role) VALUES ($1,$2,$3) RETURNING id",
+	err := u.db.QueryRowContext(ctx, "INSERT INTO users (login, password, user_role, created_by) VALUES ($1,$2,$3,$4) RETURNING id",
 		user.Login,
 		user.Password,
 		user.Role,
+		user.CreatedBy,
 	).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 
 	return id, nil
+}
+
+func (u *User) GetUserIDByLogin(ctx context.Context, login string) (uint64, error) {
+	var id uint64
+
+	err := u.db.GetContext(ctx, &id, "SELECT id FROM users WHERE login = $1", login)
+	if err != nil {
+		return 0, err
+	}
+
+	if id == 0 {
+		return 0, status.Errorf(codes.Internal, "user not found")
+	}
+
+	return id, nil
+}
+
+func (u *User) DeleteUserByUserID(ctx context.Context, userID uint64) error {
+	_, err := u.db.ExecContext(ctx, "DELETE FROM users WHERE id = $1", userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *User) UpdateUserPasswordAndRoleByUserID(ctx context.Context, userID uint64, password string, role string) error {
+	_, err := u.db.ExecContext(ctx, "UPDATE users SET (password, user_role) = ($1,$2) WHERE id = $3", password, role, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

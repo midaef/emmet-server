@@ -20,7 +20,7 @@ func (a *AuthEndpoint) AuthWithCredentials(ctx context.Context, req *auth.AuthWi
 	}
 
 	if !a.services.UserService.IsExistByLogin(ctx, req.GetLogin()) {
-		return nil, status.Error(codes.NotFound, "login does not exist")
+		return nil, status.Error(codes.NotFound, "login doesn't exist")
 	}
 
 	hashPassword, err := helpers.NewMD5Hash(req.GetPassword())

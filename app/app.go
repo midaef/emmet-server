@@ -4,11 +4,13 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/midaef/emmet-server/app/endpoint"
 	"github.com/midaef/emmet-server/app/endpoint/auth"
+	"github.com/midaef/emmet-server/app/endpoint/user"
 	"github.com/midaef/emmet-server/app/repository"
 	"github.com/midaef/emmet-server/app/service"
 	"github.com/midaef/emmet-server/config"
 	"github.com/midaef/emmet-server/dependers/database"
 	app_auth "github.com/midaef/emmet-server/extra/auth"
+	app_user "github.com/midaef/emmet-server/extra/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net"
@@ -57,8 +59,9 @@ func (app *App) StartApp(certPath string) error {
 	store := repository.NewRepository(db)
 
 	service := service.NewService(store, app.config)
+	service.InitServices()
 
-	endpointContainer := app.InitEndpointContainer(service)
+	endpointContainer := app.InitEndpointContainer(service.Services)
 
 	listener, err := net.Listen("tcp", ":"+app.config.Server.Port)
 	if err != nil {
@@ -68,6 +71,7 @@ func (app *App) StartApp(certPath string) error {
 	grpcServer := grpc.NewServer()
 
 	app_auth.RegisterAuthServer(grpcServer, endpointContainer.AuthService)
+	app_user.RegisterUserServer(grpcServer, endpointContainer.UserService)
 
 	app.logger.Info("emmet-server successfully started",
 		zap.String("addr", app.config.Server.IP+":"+app.config.Server.Port),
@@ -81,11 +85,13 @@ func (app *App) StartApp(certPath string) error {
 	return nil
 }
 
-func (app *App) InitEndpointContainer(service *service.Service) *endpoint.EndpointContainer {
+func (app *App) InitEndpointContainer(service *service.Services) *endpoint.EndpointContainer {
 	authServices := auth.NewAuthEndpoint(service, app.config)
+	userServices := user.NewUserEndpoint(service, app.config)
 
 	serviceContainer := endpoint.NewEndpointContainer(
 		authServices,
+		userServices,
 	)
 
 	return serviceContainer

@@ -22,11 +22,13 @@ message AuthWithCredentialsRequest {
   string password  = 2;
 }
 
-message AuthWithAccessTokenRequest{
+message AuthWithAccessTokenRequest {
   string access_token = 1;
 }
 
-message AuthWithAccessTokenResponse{}
+message AuthWithAccessTokenResponse {
+  string message = 1;
+}
 
 
 

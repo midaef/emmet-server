@@ -1,17 +1,17 @@
-package auth
+package user
 
 import (
 	"github.com/midaef/emmet-server/app/service"
 	"github.com/midaef/emmet-server/config"
 )
 
-type AuthEndpoint struct {
+type UserEndpoint struct {
 	services *service.Services
 	config   *config.Config
 }
 
-func NewAuthEndpoint(services *service.Services, config *config.Config) *AuthEndpoint {
-	return &AuthEndpoint{
+func NewUserEndpoint(services *service.Services, config *config.Config) *UserEndpoint {
+	return &UserEndpoint{
 		config:   config,
 		services: services,
 	}

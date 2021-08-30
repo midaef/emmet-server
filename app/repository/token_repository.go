@@ -47,5 +47,4 @@ func (t *Token) DeleteTokenByAccessToken(ctx context.Context, accessToken string
 	}
 
 	return nil
-
 }
