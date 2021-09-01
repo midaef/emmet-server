@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (u *UserEndpoint) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (*user.MessageResponse, error) {
+func (u *UserEndpoint) DeleteUser(ctx context.Context, req *user.DeleteUserRequest) (*user.UserMessageResponse, error) {
 	id, err := u.services.TokenService.GetUserIDByAccessToken(ctx, req.GetAccessToken(), u.config.JWT.SecretKey)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (u *UserEndpoint) DeleteUser(ctx context.Context, req *user.DeleteUserReque
 		return nil, err
 	}
 
-	return &user.MessageResponse{
+	return &user.UserMessageResponse{
 		Message: "user was deleted successfully",
 	}, nil
 }

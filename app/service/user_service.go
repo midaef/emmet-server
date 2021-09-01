@@ -37,3 +37,7 @@ func (s *Service) DeleteUserByUserID(ctx context.Context, userID uint64) error {
 func (s *Service) UpdateUserPasswordAndRoleByUserID(ctx context.Context, userID uint64, password string, role string) error {
 	return s.repository.UserRepository.UpdateUserPasswordAndRoleByUserID(ctx, userID, password, role)
 }
+
+func (s *Service) GetUserIDByLogin(ctx context.Context, login string) (uint64, error) {
+	return s.repository.UserRepository.GetUserIDByLogin(ctx, login)
+}

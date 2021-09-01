@@ -58,3 +58,32 @@ func (r *Role) GetRoleByRoleID(ctx context.Context, roleID uint64) (*models.Role
 
 	return &role, nil
 }
+
+func (r *Role) CreateRole(ctx context.Context, role *models.Role) (uint64, error) {
+	var id uint64
+
+	err := r.db.QueryRowContext(ctx, "INSERT INTO roles (role_name, create_user, delete_user, update_user, "+
+		"create_config, delete_config, update_config, create_role, delete_role, update_role, create_value, delete_value, "+
+		"update_value, created_by, allowed_users) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id",
+		role.RoleName,
+		role.CreateUser,
+		role.DeleteUser,
+		role.UpdateUser,
+		role.CreateConfig,
+		role.DeleteConfig,
+		role.UpdateConfig,
+		role.CreateRole,
+		role.DeleteRole,
+		role.UpdateRole,
+		role.CreateValue,
+		role.DeleteValue,
+		role.UpdateValue,
+		role.CreatedBy,
+		role.AllowedUsers,
+	).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}

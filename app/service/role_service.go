@@ -48,3 +48,7 @@ func (s *Service) IsRoleAllowedForUser(ctx context.Context, userID uint64, role 
 
 	return isAllowed, nil
 }
+
+func (s *Service) CreateRole(ctx context.Context, role *models.Role) (uint64, error) {
+	return s.repository.RoleRepository.CreateRole(ctx, role)
+}

@@ -26,6 +26,7 @@ type RoleRepository interface {
 	IsExistByRole(ctx context.Context, role string) bool
 	GetRoleIDByName(ctx context.Context, name string) (uint64, error)
 	GetRoleByRoleID(ctx context.Context, roleID uint64) (*models.Role, error)
+	CreateRole(ctx context.Context, role *models.Role) (uint64, error)
 }
 
 type ConfigRepository interface {

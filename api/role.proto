@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package proto.role;
+
+option go_package = "./role";
+
+service Role {
+  rpc CreateRole(RoleRequest) returns (RoleMessageResponse);
+  rpc DeleteRole(DeleteRoleRequest) returns (RoleMessageResponse);
+  rpc UpdateRole(RoleRequest) returns (RoleMessageResponse);
+}
+
+message RoleRequest {
+  string          access_token  = 1;
+  string          role_name     = 2;
+  bool            create_user   = 4;
+  bool            delete_user   = 5;
+  bool            update_user   = 6;
+  bool            create_config = 7;
+  bool            delete_config = 8;
+  bool            update_config = 9;
+  bool            create_role   = 10;
+  bool            delete_role   = 11;
+  bool            update_role   = 12;
+  bool            create_value  = 13;
+  bool            delete_value  = 14;
+  bool            update_value  = 15;
+  repeated string allowed_users = 16;
+}
+
+message DeleteRoleRequest {
+  string access_token = 1;
+  string role_name    = 2;
+}
+
+message RoleMessageResponse {
+  string message = 1;
+}

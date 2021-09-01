@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (u *UserEndpoint) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.MessageResponse, error) {
+func (u *UserEndpoint) CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.UserMessageResponse, error) {
 	id, err := u.services.TokenService.GetUserIDByAccessToken(ctx, req.GetAccessToken(), u.config.JWT.SecretKey)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (u *UserEndpoint) CreateUser(ctx context.Context, req *user.CreateUserReque
 		return nil, err
 	}
 
-	return &user.MessageResponse{
+	return &user.UserMessageResponse{
 		Message: "user was created successfully",
 	}, nil
 }

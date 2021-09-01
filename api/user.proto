@@ -5,9 +5,9 @@ package proto.user;
 option go_package = "./user";
 
 service User {
-  rpc CreateUser(CreateUserRequest) returns (MessageResponse);
-  rpc DeleteUser(DeleteUserRequest) returns (MessageResponse);
-  rpc UpdateUser(UpdateUserRequest) returns (MessageResponse);
+  rpc CreateUser(CreateUserRequest) returns (UserMessageResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (UserMessageResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserMessageResponse);
 }
 
 message CreateUserRequest {
@@ -29,6 +29,6 @@ message UpdateUserRequest {
   string new_user_role     = 5;
 }
 
-message MessageResponse {
+message UserMessageResponse {
   string message = 1;
 }

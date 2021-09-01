@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (u *UserEndpoint) UpdateUser(ctx context.Context, req *user.UpdateUserRequest) (*user.MessageResponse, error) {
+func (u *UserEndpoint) UpdateUser(ctx context.Context, req *user.UpdateUserRequest) (*user.UserMessageResponse, error) {
 	id, err := u.services.TokenService.GetUserIDByAccessToken(ctx, req.GetAccessToken(), u.config.JWT.SecretKey)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (u *UserEndpoint) UpdateUser(ctx context.Context, req *user.UpdateUserReque
 		return nil, err
 	}
 
-	return &user.MessageResponse{
+	return &user.UserMessageResponse{
 		Message: "user was updated successfully",
 	}, nil
 }

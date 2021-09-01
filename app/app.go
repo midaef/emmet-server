@@ -4,12 +4,14 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/midaef/emmet-server/app/endpoint"
 	"github.com/midaef/emmet-server/app/endpoint/auth"
+	"github.com/midaef/emmet-server/app/endpoint/role"
 	"github.com/midaef/emmet-server/app/endpoint/user"
 	"github.com/midaef/emmet-server/app/repository"
 	"github.com/midaef/emmet-server/app/service"
 	"github.com/midaef/emmet-server/config"
 	"github.com/midaef/emmet-server/dependers/database"
 	app_auth "github.com/midaef/emmet-server/extra/auth"
+	app_role "github.com/midaef/emmet-server/extra/role"
 	app_user "github.com/midaef/emmet-server/extra/user"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -72,6 +74,7 @@ func (app *App) StartApp(certPath string) error {
 
 	app_auth.RegisterAuthServer(grpcServer, endpointContainer.AuthService)
 	app_user.RegisterUserServer(grpcServer, endpointContainer.UserService)
+	app_role.RegisterRoleServer(grpcServer, endpointContainer.RoleService)
 
 	app.logger.Info("emmet-server successfully started",
 		zap.String("addr", app.config.Server.IP+":"+app.config.Server.Port),
@@ -88,10 +91,12 @@ func (app *App) StartApp(certPath string) error {
 func (app *App) InitEndpointContainer(service *service.Services) *endpoint.EndpointContainer {
 	authServices := auth.NewAuthEndpoint(service, app.config)
 	userServices := user.NewUserEndpoint(service, app.config)
+	roleServices := role.NewRoleEndpoint(service, app.config)
 
 	serviceContainer := endpoint.NewEndpointContainer(
 		authServices,
 		userServices,
+		roleServices,
 	)
 
 	return serviceContainer

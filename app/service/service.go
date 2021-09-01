@@ -24,6 +24,7 @@ type IUserService interface {
 	GetUserByLogin(ctx context.Context, login string) (*models.User, error)
 	DeleteUserByUserID(ctx context.Context, userID uint64) error
 	UpdateUserPasswordAndRoleByUserID(ctx context.Context, userID uint64, password string, role string) error
+	GetUserIDByLogin(ctx context.Context, login string) (uint64, error)
 }
 
 type IConfigService interface {
@@ -34,6 +35,7 @@ type IRoleService interface {
 	GetRoleIDByName(ctx context.Context, name string) (*models.Role, error)
 	GetRoleByRoleID(ctx context.Context, roleID uint64) (*models.Role, error)
 	IsRoleAllowedForUser(ctx context.Context, userID uint64, role string) (bool, error)
+	CreateRole(ctx context.Context, role *models.Role) (uint64, error)
 }
 
 type IValueService interface {
